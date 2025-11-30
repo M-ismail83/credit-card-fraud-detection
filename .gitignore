@@ -8,6 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.joblib
+models/
 build/
 develop-eggs/
 dist/

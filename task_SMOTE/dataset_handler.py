@@ -1,13 +1,8 @@
 import pandas as pd
 
-class dataset:
-    def __init__(self, file_path):
-        self.file_path = file_path
-        self.data = None
-
-    def load_data(self):
-        self.data = pd.read_csv(self.file_path)
-        return self.data
+class dataset_handler:
+    def __init__(self, dataframe):
+        self.data = dataframe
     
     def get_fraud_data(self):
         return self.data[self.data['Class'] == 1]
