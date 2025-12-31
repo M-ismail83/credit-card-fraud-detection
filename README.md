@@ -43,55 +43,97 @@ Our models show auspicious results, even in the inbalanced dataset conditions.
 
 ## PCA (Principal Component Analysis) Technique
 
-To study how dimensionality reduction affects model behavior, we applied Principal Component Analysis (PCA) using 95% variance retention, which reduced the dataset from 30 original features to 27 principal components. We then compared the performance of several machine learning algorithms before and after PCA using the exact same workflow.
-The goal of this report is to analyze how PCA influences accuracy, precision, recall, and F1-score, and to explain why each model’s performance improved, decreased, or stayed similar after dimensionality reduction.
+This part of the project investigates the impact of dimensionality reduction using PCA on different machine learning models for credit card fraud detection.
+
+Instead of assuming that PCA always improves performance, our objective was to systematically evaluate when PCA helps, when it hurts, and why, using the same experimental pipeline for all models.
 
 ### Methodology
+To ensure a fair comparison, the following workflow was applied both with and without PCA for each model:
 
-We used the same workflow for all algorithms to ensure a fair comparison.
-1. Data Loading & Splitting:
-The dataset was loaded from creditcard.csv. Features (X) and labels (y) were separated, then split into 80% training and 20% testing using stratified sampling.
+1. Data Splitting
+
+ - The dataset was split into 80% training and 20% testing sets.
+ - Stratified sampling was used to preserve the original class imbalance.
+
+2. Feature Scaling
+
+- All features were standardized using StandardScaler.
+- The scaler was fitted on the training set and applied to the test set.
+
+3. PCA Transformation
+
+ - PCA was applied with 95% variance retention.
+ - This reduced the feature space from 30 original features to 27 principal components.
+ - PCA was fitted on the training data and applied to the test data to avoid data leakage.
+
+4. Model Training
+For each algorithm (XGBoost, MLP, SVM, KNN), two models were trained:
+
+ - One using the original scaled features
+ - One using the PCA-transformed features
+
+5. Threshold Optimization (XGBoost only)
+ 
+ - For XGBoost, an internal training/validation split was used.
+ - The decision threshold was tuned to maximize the F1-score, improving performance on the imbalanced dataset.
+
+6. Evaluation Metrics
+All models were evaluated on the test set using:
+ - Accuracy
+ - Precision
+ - Recall
+ - F1-score
 
 
-2. Feature Scaling:
-All features were standardized using StandardScaler (fit on training data, applied to test data).
+
+### Model-by-Model Analysis
+
+#### XGBoost 
+ - PCA caused a small decrease in precision, recall, and F1-score.
+ - Computational efficiency slightly improved.
+
+This behavior is expected because XGBoost relies on original feature interactions and decision-tree splits. PCA mixes features into linear components, which:
+ - Reduces interpretability for trees
+ - Weakens informative fraud-related patterns
+ - Removes small but important signals
+
+As a result, PCA slightly harms XGBoost performance.
 
 
-3. PCA Transformation (95% Variance):
-PCA was applied to the scaled training data, reducing 30 features → 27 components. The same transformation was applied to the test set.
+#### Multi-Layer Perceptron (MLP)
+ - PCA increased recall but reduced precision, leading to a small change in F1-score.
 
+PCA benefits MLP by:
+ - Reducing noise
+ - Simplifying the feature space
 
-4. Model Training (Before and After PCA): 
-For each algorithm (XGBoost, MLP, SVM, KNN), we trained:
-- A model on the original scaled features
-- A model on the PCA-reduced features
+However, the loss of fine-grained feature details increases false positives, creating a recall–precision trade-off.
 
+#### Support Vector Machine (SVM)
+ - Performance degraded significantly after PCA, especially in recall and F1-score.
 
-5. Validation Threshold Selection: 
-The training data was internally split again into training/validation subsets.
-The validation set was used to find the best decision threshold that maximized the F1-score.
+SVM is highly sensitive to:
+ - Feature-space geometry
+ - Distance relationships
+ - Class overlap
 
-6. Model Evaluation:
-Each model was evaluated on the test set using:
-Accuracy, Precision, Recall, F1-score, Processing time
+PCA alters these relationships, and when combined with extreme class imbalance, results in weaker margins and reduced class separability.
 
-This allowed us to directly compare how PCA affects performance and computation across different algorithms.
+#### K-Nearest Neighbors (KNN)
+After PCA, KNN showed:
+ - Slightly higher precision
+ - Slightly lower recall
+ - Nearly unchanged F1-score
 
+ PCA reduced noise and improved distance stability, but also slightly altered neighborhood relationships.
+The reduced dimensionality improved computational efficiency without significantly affecting overall performance.
 
-### Model-by-Model Results & Analysis
-
-#### XGBoost Results
-After applying PCA, XGBoost showed a small decrease in performance across precision, recall, and F1-score. Processing time improved slightly due to fewer input features.
-
-XGBoost relies heavily on original feature interactions and raw variable splits. PCA mixes these features into new components, which:
-- Reduces interpretability for the trees
-- Weakens useful fraud-related patterns
-- Removes small-but-important signals
-Therefore, PCA slightly harms XGBoost performance.
-
-#### Multi-Layer Perceptron (MLP) Results
-#### Support Vector Machine (SVM) Results
-#### K-Nearest Neighbors (KNN) Results
+Key Takeaways from PCA Experiments
+ - PCA does not universally improve model performance
+ - Tree-based models (XGBoost) are negatively affected by PCA
+ - Distance-based and neural models show mixed effects
+ - PCA mainly improves efficiency and noise handling, not necessarily accuracy
+ - The usefulness of PCA strongly depends on the model architecture and decision mechanism
 
 -----
 
