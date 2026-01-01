@@ -28,15 +28,47 @@ We used the [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ul
 
 -----
 
+## How To Replicate
 
+To replicate this experiments, simply clone this repository, install the .csv file and place it in the folder associated with the experiment you want to do.
+
+In some parts, the models and plots will be saved in specific folders for ease of use.
 
 ## SMOTE (Synthetic Minority Over Sampling) Technique
 
+In real world; there are datasets where the data is so unbalanced, we need to create synthetic datas. In this part, we applied SMOTE algorithm in order to create fake data and see how various techniques behave with this synthetic data. 
 
 ### Methodology
 
+We used two types of algorithms: SMOTE and Borderline_SMOTE. The main principle of these algorithms are creating fake data by using what's already in the k nearest neighbors. Borderline_SMOTE has a similar way of working. It looks at the neaarest boundary between classes.
+
 ### Results
-Our models show auspicious results, even in the inbalanced dataset conditions.
+
+The results for this task are somehow expected. In the following plots, we can see how the models behave with increasingly more fake "fraud" data. 
+
+These plots show how the test data performed based on fake "fraud" count in the training dataset used to train them.
+
+#### SMOTE + Logistic Regression
+
+![SMOTE+LogReg](task_SMOTE/plots_and_figures/LogReg.png)
+As we can see in this plot, the accuracy is a lie. We can clearly see presicion and f1-score going down as the fake "fraud" count increase. Which means the model is not able to differentiate between "real" or "fraud" transactions.
+
+#### Borderline_SMOTE + Logistic Regression
+
+![BorderlineSMOTE+LogReg](task_SMOTE/plots_and_figures/LogReg_Borderline.png)
+In this plot, we can see mostly same things as the regular SMOTE. One thing to notice is how the recall goes up gradually instead of going to the top really fast. This tells us Borderline_SMOTE creates data that does not distrupt how "fraud" data are distributed along the dataset.
+
+#### SMOTE + Random Forest
+
+![SMOTE+RanFor](task_SMOTE/plots_and_figures/RanFor.png)
+In this plot, we can see the difference between Logistic Regression and Random Forest clearly. the presicion and F1-Score is significantly higher than Logistic Regression. This means Random Forest is better at telling the difference between "real" and "fraud" data. 
+
+![BorderlineSMOTE+RanFor](task_SMOTE/plots_and_figures/RanFor_Borderline.png)
+In this plot, we can see how changing the algorithm from normal SMOTE to Borderline_SMOTE did not make significant changes to the Random Forest model. Only difference is recall spikes at the 3500 "fraud" mark instead of 2500. This might be because how Borderline_SMOTE creates fake data.
+
+### Conclusion
+
+In these plots, we can see how adding synthetic values to the dataset might not be the best approach in solving the "unbalanced" issue. Even the smallest addition to the dataset can make the model perform worse than before due to the noise in every new data. If necessary, adding about 500-1000 values might be the best since the drop in values is minimal.
 
 -----
 
@@ -97,11 +129,52 @@ Therefore, PCA slightly harms XGBoost performance.
 
 
 ## Missing Value Imputation Technique
+In datasets, columns and rows are not always full. Some might have a lot of missing values so that result is the opposite of what's expected. Of course, there are several methods to solve this issue. In this task, we tried solving missing value issue with 4 different algorithms.
 
 ### Methodology
 
+Since this dataset doesn't have any missing values, we created some and used these methods to fill in the gaps:
+
+- Median Imputaiton
+
+This method fills the gaps in data with median of values in other rows.
+
+- kNN Imputation
+
+This method fills the gaps with looking at the k nearest neighbors and computing according to those values.
+
+- MICE Imputation
+
+This method fills the gaps in data by looking at the neighboring columns adn predicts the missing value via regression.
+
+- End-Of-Tail Imputation
+
+This method fills the gaps in data with very large numbers (999 or -999) and force the model to treat missing values as another category.
+
+
 ### Results
-Our models show auspicious results, even in the inbalanced dataset conditions.
+
+![ResultPlot](task_miss_val/plots/imputation_results.png)
+
+The results tell us how well each method performed. But there are still some things to say.
+
+#### Time Cost
+
+As we can clearly see, all of the methods performed nearly good as the original data. This tells us one important thing: Are some methods really worth using?
+
+These methods, especially kNN, take a lot of time to compute. Since even using a simple median algorithm is nearly as good as others, using those high time cost methods is unnecessary.
+
+#### End-Of-Tail Disaster
+
+As we can clearly see, End-Of-Tail method performed really bad. Since MICE uses MCAR for this dataset, it filled the gaps with either 999 or -999. This resulted in poor AUPRC and ROC-AUC scores.
+
+#### Redundant Informaitons
+
+Since the gap between kNN Imputing and the original data is very small, we can say that columns are highly correlated. We can easily fill the gaps by looking at other columns and making assumtions.
+
+### Conclusion
+
+With this task, we can conclude the fact that in a highly imbalanced dataset like this, using simple algorithms like median or MICE imputations is way efficient than highg cost algorithms like kNN.
 
 -----
 
@@ -117,25 +190,25 @@ Isolation Forest was the perfect fit for this purpose.
 Our models show auspicious results, even in the imbalanced dataset conditions. 
 
 - Anomaly Score Distribution
-![Anomaly-Score-Distribution](anomaly_score_distribution.png)
+![Anomaly-Score-Distribution](outlier/plots/anomaly_score_dist.png)
 
 Less overlap means model is doing better at classifying.
 
 
 - Confusion Matrix
-![Confusion-Matrix](confusion_matrix.png)
+![Confusion-Matrix](outlier/plots/confusion_matrix.png)
 
 What we see here is the amounts of; normal transactions flagged as normal, fraud transactions flagged as normal, fraud transactions flagged as fraud, normal transactions flagged as frauds.
 
 
 - tSNE Visualization
-![tSNE-Visualization](tSNE_visualization.png)
+![tSNE-Visualization](outlier/plots/tSNE_visualization.png)
 
 Just a fun visualization, may be deactivated in the evaluation.py
 
 
 - Precision-Recall Curve
-![Precision-Recall](precision_recall.png)
+![Precision-Recall](outlier/plots/precision_recall.png)
 
 In ideal conditions, this graph would start small and rise towards the end (basically the opposite of this very graph). This is because our model focuses on the very obvious frauds in the beginning, and the model gets "more paranoid" as the frauds get more subtle. We can improve these results by doing feature engineering on our parameters, which are: 
 

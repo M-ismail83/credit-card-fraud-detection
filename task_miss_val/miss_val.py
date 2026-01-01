@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-dataset = pd.read_csv("creditcard.csv")
+dataset = pd.read_csv("task_miss_val/creditcard.csv")
 
 frauds = dataset[dataset['Class'] == 1]
 normals = dataset[dataset['Class'] == 0]

@@ -17,16 +17,18 @@ X_train_pool, X_test, y_train_pool, y_test = train_test_split(X, y, test_size=0.
 
 ds_pool = pd.concat([X_train_pool, y_train_pool], axis=1)
 
+# Get all the frauds and normals
 pool_normals = ds_pool[ds_pool['Class'] == 0]
 pool_frauds = ds_pool[ds_pool['Class'] == 1]
 
+# Select a number of fraud and normals for training
 selected_normals = pool_normals.sample(n=5000, random_state=42)
 selected_frauds = pool_frauds.sample(n=350, random_state=42)
 
 df_train_final = pd.concat([selected_normals, selected_frauds])
 df_train_final = df_train_final.sample(frac=1, random_state=42).reset_index(drop=True)
 
-X_train = df_train_final.drop('Class', axis=1)
+X_train = df_train_final.drop(['Class', 'Time'], axis=1)
 y_train = df_train_final['Class']
 
 X_loop_train = X_train

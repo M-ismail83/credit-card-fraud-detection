@@ -22,6 +22,6 @@ class dataset_handler:
         return pd.concat([data1, data2])
     
     def get_features_and_labels(self, data):
-        X = data.drop('Class', axis=1)
+        X = data.drop(['Class', 'Time'], axis=1)
         y = data['Class']
         return X, y
