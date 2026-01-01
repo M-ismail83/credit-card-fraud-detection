@@ -14,7 +14,7 @@ from sklearn.metrics import (
 import matplotlib.pyplot as plt
 
 # Load the dataset
-df = pd.read_csv("creditcard.csv")
+df = pd.read_csv("PCA/creditcard.csv")
 
 # Split into features (X) and labels (y)
 X = df.drop("Class", axis=1)
@@ -55,7 +55,7 @@ import matplotlib.pyplot as plt
 overall_start = time.time()
 
 # Load the dataset
-df = pd.read_csv("creditcard.csv")
+df = pd.read_csv("PCA/creditcard.csv")
 
 # Split into features (X) and labels (y)
 X = df.drop("Class", axis=1)
@@ -185,6 +185,7 @@ plt.ylim(0, 1.05)
 plt.title('MLP Performance Before and After PCA')
 plt.legend()
 plt.tight_layout()
+plt.savefig("PCA/mlp_pca_metrics.png")
 plt.show()
 
 # ============ TOTAL TIME END ============

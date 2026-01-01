@@ -24,9 +24,12 @@ We used the [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ul
 
 ## How To Replicate
 
-To replicate this experiments, simply clone this repository, install the .csv file and place it in the folder associated with the experiment you want to do.
-
-In some parts, the models and plots will be saved in specific folders for ease of use.
+1. Clone the repository.
+2. Install the requirements:
+    `pip install -r requirements.txt`
+3. Install the .csv file from the link above.
+4. Paste the .csv file into the experiment file you want if not present.
+5. Change the hyperparameters to your liking and run the main file.
 
 ## SMOTE (Synthetic Minority Over Sampling) Technique
 
@@ -104,6 +107,8 @@ This allowed us to directly compare how PCA affects performance and computation 
 
 #### XGBoost Results
 
+![XGB_PCA](PCA/xgb_pca_bar_metrics.png)
+
 After applying PCA, XGBoost showed a small decrease in performance across precision, recall, and F1-score. Processing time improved slightly due to fewer input features.
 
 XGBoost relies heavily on original feature interactions and raw variable splits. PCA mixes these features into new components, which:
@@ -115,9 +120,54 @@ Therefore, PCA slightly harms XGBoost performance.
 
 #### Multi-Layer Perceptron (MLP) Results
 
+![MLP_PCA](PCA/mlp_pca_metrics.png)
+
+With PCA, MLP achieved:
+
+- Higher recall (detects more fraud)
+- Lower precision (more false positives)
+- A small overall change in F1-score
+
+PCA removes noise and simplifies the feature space, helping the MLP identify more fraud cases.
+ However, the loss of fine-grained details leads to more false alarms.
+ This creates a recall–precision trade-off.
+
 #### Support Vector Machine (SVM) Results
 
+We trained an SVM on the full 30-feature dataset, then trained the same model on the PCA-reduced 27 features.
+
+![SVM_PCA](PCA/svm_pca_bar_metrics.png)
+
+SVM performance dropped significantly after PCA, especially recall and F1-score.
+ We also observed solver warnings due to difficulty in finding a separating hyperplane.
+SVM is very sensitive to the geometry of the data.
+ PCA transforms and compresses the feature space, causing:
+
+- Overlap between classes
+- Distorted distances
+- A weaker margin
+This makes SVM much less effective.
+
 #### K-Nearest Neighbors (KNN) Results
+
+![SVM_PCA](PCA/knn_pca_bar_metrics.png)
+
+
+After PCA, KNN showed:
+
+- Slight recall decrease
+- Slight precision increase
+- Nearly unchanged F1-score
+- Faster computation
+
+Because PCA preserves 95% of the variance, the overall structure stays similar.
+ Noise is reduced → slight precision improvement
+ Distances change slightly → small recall drop
+ Reduced dimensionality → much faster distance calculations
+
+### Conclusion
+
+This study showed that PCA does not improve all machine-learning algorithms equally. PCA helped models that benefit from noise reduction and simpler feature spaces, such as MLP and KNN, but it harmed models that depend on original feature structure, such as SVM and XGBoost. Overall, PCA reduced computation time but caused mixed effects on performance, meaning its usefulness depends on the model’s design and how it interprets transformed features.
 
 -----
 
