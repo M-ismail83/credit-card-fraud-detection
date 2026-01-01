@@ -1,8 +1,6 @@
 # Credit Card Fraud Detection
+
 The repository of a Machine Learning project for the course SE3007.
-
-
-
 
 ## About This Project
 
@@ -13,9 +11,6 @@ This project aims to distinguish whether a credit card transaction is fraud or a
 - Missing Value Imputation Technique
 - Outlier Technique
 
-
-
-
 ## About The Dataset
 
 We used the [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud), from Kaggle. The dataset has logs of credit card transactions which can either be normal or fraud.
@@ -24,7 +19,6 @@ We used the [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ul
 - Fraud Transactions : 492 (0.172% of total)
 - Format : numerical
 - Total Features : 30 (background information only available for Time and Amount, because of confidentiality)
-
 
 -----
 
@@ -36,7 +30,7 @@ In some parts, the models and plots will be saved in specific folders for ease o
 
 ## SMOTE (Synthetic Minority Over Sampling) Technique
 
-In real world; there are datasets where the data is so unbalanced, we need to create synthetic datas. In this part, we applied SMOTE algorithm in order to create fake data and see how various techniques behave with this synthetic data. 
+In real world; there are datasets where the data is so unbalanced, we need to create synthetic datas. In this part, we applied SMOTE algorithm in order to create fake data and see how various techniques behave with this synthetic data.
 
 ### Methodology
 
@@ -44,7 +38,7 @@ We used two types of algorithms: SMOTE and Borderline_SMOTE. The main principle 
 
 ### Results
 
-The results for this task are somehow expected. In the following plots, we can see how the models behave with increasingly more fake "fraud" data. 
+The results for this task are somehow expected. In the following plots, we can see how the models behave with increasingly more fake "fraud" data.
 
 These plots show how the test data performed based on fake "fraud" count in the training dataset used to train them.
 
@@ -61,7 +55,7 @@ In this plot, we can see mostly same things as the regular SMOTE. One thing to n
 #### SMOTE + Random Forest
 
 ![SMOTE+RanFor](task_SMOTE/plots_and_figures/RanFor.png)
-In this plot, we can see the difference between Logistic Regression and Random Forest clearly. the presicion and F1-Score is significantly higher than Logistic Regression. This means Random Forest is better at telling the difference between "real" and "fraud" data. 
+In this plot, we can see the difference between Logistic Regression and Random Forest clearly. the presicion and F1-Score is significantly higher than Logistic Regression. This means Random Forest is better at telling the difference between "real" and "fraud" data.
 
 ![BorderlineSMOTE+RanFor](task_SMOTE/plots_and_figures/RanFor_Borderline.png)
 In this plot, we can see how changing the algorithm from normal SMOTE to Borderline_SMOTE did not make significant changes to the Random Forest model. Only difference is recall spikes at the 3500 "fraud" mark instead of 2500. This might be because how Borderline_SMOTE creates fake data.
@@ -72,7 +66,6 @@ In these plots, we can see how adding synthetic values to the dataset might not 
 
 -----
 
-
 ## PCA (Principal Component Analysis) Technique
 
 To study how dimensionality reduction affects model behavior, we applied Principal Component Analysis (PCA) using 95% variance retention, which reduced the dataset from 30 original features to 27 principal components. We then compared the performance of several machine learning algorithms before and after PCA using the exact same workflow.
@@ -81,25 +74,23 @@ The goal of this report is to analyze how PCA influences accuracy, precision, re
 ### Methodology
 
 We used the same workflow for all algorithms to ensure a fair comparison.
+
 1. Data Loading & Splitting:
 The dataset was loaded from creditcard.csv. Features (X) and labels (y) were separated, then split into 80% training and 20% testing using stratified sampling.
-
 
 2. Feature Scaling:
 All features were standardized using StandardScaler (fit on training data, applied to test data).
 
-
 3. PCA Transformation (95% Variance):
 PCA was applied to the scaled training data, reducing 30 features → 27 components. The same transformation was applied to the test set.
 
-
-4. Model Training (Before and After PCA): 
+4. Model Training (Before and After PCA):
 For each algorithm (XGBoost, MLP, SVM, KNN), we trained:
+
 - A model on the original scaled features
 - A model on the PCA-reduced features
 
-
-5. Validation Threshold Selection: 
+5. Validation Threshold Selection:
 The training data was internally split again into training/validation subsets.
 The validation set was used to find the best decision threshold that maximized the F1-score.
 
@@ -109,26 +100,29 @@ Accuracy, Precision, Recall, F1-score, Processing time
 
 This allowed us to directly compare how PCA affects performance and computation across different algorithms.
 
-
 ### Model-by-Model Results & Analysis
 
 #### XGBoost Results
+
 After applying PCA, XGBoost showed a small decrease in performance across precision, recall, and F1-score. Processing time improved slightly due to fewer input features.
 
 XGBoost relies heavily on original feature interactions and raw variable splits. PCA mixes these features into new components, which:
+
 - Reduces interpretability for the trees
 - Weakens useful fraud-related patterns
 - Removes small-but-important signals
 Therefore, PCA slightly harms XGBoost performance.
 
 #### Multi-Layer Perceptron (MLP) Results
+
 #### Support Vector Machine (SVM) Results
+
 #### K-Nearest Neighbors (KNN) Results
 
 -----
 
-
 ## Missing Value Imputation Technique
+
 In datasets, columns and rows are not always full. Some might have a lot of missing values so that result is the opposite of what's expected. Of course, there are several methods to solve this issue. In this task, we tried solving missing value issue with 4 different algorithms.
 
 ### Methodology
@@ -150,7 +144,6 @@ This method fills the gaps in data by looking at the neighboring columns adn pre
 - End-Of-Tail Imputation
 
 This method fills the gaps in data with very large numbers (999 or -999) and force the model to treat missing values as another category.
-
 
 ### Results
 
@@ -178,7 +171,6 @@ With this task, we can conclude the fact that in a highly imbalanced dataset lik
 
 -----
 
-
 ## Outlier Technique
 
 ### Methodology
@@ -187,36 +179,34 @@ In the Outlier Method, we trained the model only on the normal transactions. Our
 Isolation Forest was the perfect fit for this purpose.
 
 ### Results
-Our models show auspicious results, even in the imbalanced dataset conditions. 
+
+Our models show auspicious results, even in the imbalanced dataset conditions.
 
 - Anomaly Score Distribution
 ![Anomaly-Score-Distribution](outlier/plots/anomaly_score_dist.png)
 
 Less overlap means model is doing better at classifying.
 
-
 - Confusion Matrix
 ![Confusion-Matrix](outlier/plots/confusion_matrix.png)
 
 What we see here is the amounts of; normal transactions flagged as normal, fraud transactions flagged as normal, fraud transactions flagged as fraud, normal transactions flagged as frauds.
-
 
 - tSNE Visualization
 ![tSNE-Visualization](outlier/plots/tSNE_visualization.png)
 
 Just a fun visualization, may be deactivated in the evaluation.py
 
-
 - Precision-Recall Curve
 ![Precision-Recall](outlier/plots/precision_recall.png)
 
-In ideal conditions, this graph would start small and rise towards the end (basically the opposite of this very graph). This is because our model focuses on the very obvious frauds in the beginning, and the model gets "more paranoid" as the frauds get more subtle. We can improve these results by doing feature engineering on our parameters, which are: 
+In ideal conditions, this graph would start small and rise towards the end (basically the opposite of this very graph). This is because our model focuses on the very obvious frauds in the beginning, and the model gets "more paranoid" as the frauds get more subtle. We can improve these results by doing feature engineering on our parameters, which are:
 
 #### Future Work & Potential Improvements
 
 In this project we focused on a baseline using Isolation Forest. However, the following steps could further improve the model's recall and precision:
 
-1.  Temporal Analysis: Converting the raw 'Time' seconds into "Hour of the Day" to capture time-dependent fraud patterns (e.g., late-night transactions).
-2.  Log-Scaling Amount: Applying Logarithmic Transformation to the 'Amount' feature to handle its heavy-tailed distribution, making it easier for the model to process extreme values.
-3.  Feature Interactions: Generating new features by multiplying 'Amount' with key PCA components (e.g., 'Amount * V14') to highlight correlations specific to fraud.
-4.  Ensemble Methods: Combining Isolation Forest with Local Outlier Factor (LOF) or Deep Autoencoders in a voting classifier to create a more robust hybrid detection system.
+1. Temporal Analysis: Converting the raw 'Time' seconds into "Hour of the Day" to capture time-dependent fraud patterns (e.g., late-night transactions).
+2. Log-Scaling Amount: Applying Logarithmic Transformation to the 'Amount' feature to handle its heavy-tailed distribution, making it easier for the model to process extreme values.
+3. Feature Interactions: Generating new features by multiplying 'Amount' with key PCA components (e.g., 'Amount * V14') to highlight correlations specific to fraud.
+4. Ensemble Methods: Combining Isolation Forest with Local Outlier Factor (LOF) or Deep Autoencoders in a voting classifier to create a more robust hybrid detection system.
